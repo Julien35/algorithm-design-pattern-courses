@@ -90,8 +90,46 @@ function createVotes(votesNumber) {
 // - Gandalf avec 60% de mentions passable
 // - Beyoncé avec 50% de mentions à rejeter
 
+
+// nombres de votes par mentions index 0 à rejeter, index 1 à insuffisant...
+// candidates = {
+//     'hermione': [0, 0, 0, 0, 0, 0, 0],
+//     'balou': [0, 0, 0, 0, 0, 0, 0],
+//     'chuck-norris': [0, 0, 0, 0, 0, 0, 0],
+//     'elsa': [0, 0, 0, 0, 0, 0, 0],
+//     'gandalf': [0, 0, 0, 0, 0, 0, 0],
+//     'beyonce': [0, 0, 0, 0, 0, 0, 0]
+// };
 function resultHash(votes) {
-    
+    let candidatesResults = addVotesToCanditates(votes);
+    console.log(candidatesResults);
+
+    // calculer la mention médiane de chaque candidat
+    return majorityMentionsHash(candidatesResults);
+}
+
+function majorityMentionsHash(candidatesResults) {
+    let cumulatedVotes = 0;
+    // calcul de la mediane
+}
+
+function addVotesToCanditates(votes) {
+    let canditates = {};
+
+    // creation du tableau de resultat initialisé à 0
+    for (let candidate in CANDIDATES) {
+        canditates[candidate.toString()] = [0, 0, 0, 0, 0, 0, 0];
+    }
+
+    // Pour chaque vote, ajouter 1 quand un candidat reçoit une mention
+    votes.forEach((vote, index) => {
+        for (let canditate in vote) {
+            if (vote.hasOwnProperty(canditate)) {
+                canditates[canditate][vote[canditate]]++;
+            }
+        }
+    });
+    return canditates;
 }
 
 
@@ -101,13 +139,6 @@ function resultHash(votes) {
 votes = createVotes(VOTES);
 // console.log(votes);
 
-// nombres de votes par mentions index 0 à rejeter, index 1 à insuffisant...
-candidates = {
-    'hermione': [0, 0, 0, 0, 0, 0, 0],
-    'balou': [0, 0, 0, 0, 0, 0, 0],
-    'chuck-norris': [0, 0, 0, 0, 0, 0, 0],
-    'elsa': [0, 0, 0, 0, 0, 0, 0],
-    'gandalf': [0, 0, 0, 0, 0, 0, 0],
-    'beyonce': [0, 0, 0, 0, 0, 0, 0]
-};
+
+let result = resultHash(votes);
 
