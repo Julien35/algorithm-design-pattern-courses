@@ -102,23 +102,101 @@ function createVotes(votesNumber) {
 // };
 function resultHash(votes) {
     let candidatesResults = addVotesToCanditates(votes);
-    console.log(candidatesResults);
+    let result = {};
 
     // calculer la mention médiane de chaque candidat
-    return majorityMentionsHash(candidatesResults);
+    let majorityMentions = majorityMentionsHash(candidatesResults);
+    // console.log(majorityMentions);
+
+    // trier les candidats
+    let sortCandidates = sortCandidatesByMention(majorityMentions);
+    // console.log(sortCandidates);
+
+    return result;
+}
+
+// unsorted = [
+// (key, (
+// mention["mention"],
+// mention["score"])
+//      )
+// for key, mention in mentions.items()
+// ]
+function sortCandidatesByMention(majorityMentionsHash) {
+    let sortCandidates = {};
+
+    let unsorted = [];
+    for (let key in majorityMentionsHash) {
+        if (majorityMentionsHash.hasOwnProperty(key)) {
+            unsorted.push({
+                "name": key,
+                "mention": majorityMentionsHash[key].mention,
+                "score": majorityMentionsHash[key].score
+            });
+        }
+    }
+    console.log("unsorted : ");
+	console.log(unsorted);
+
+	// tri à bulle
+    let swapped = true;
+    while (swapped) {
+        swapped = false;
+
+        for (let i = 0; i < unsorted.length - 1; i++) {
+            // BUG HERE !!!!!!!!!!!!!!!!!!!!!!!!
+            if (unsorted[i + 1][1] > unsorted[i][1]) {
+                [unsorted[i+1], unsorted[i]] = [unsorted[i], unsorted[i+1]];
+                swapped = true;
+            }
+        }
+    }
+
+    //console.log("sorted : ");
+	//console.log(unsorted);
+
+
+    return sortCandidates;
 }
 
 function majorityMentionsHash(candidatesResults) {
-    let cumulatedVotes = 0;
+    let majorityMentionsHash = {};
+
     // calcul de la mediane
+    for (let candidate in candidatesResults) {
+        if (candidatesResults.hasOwnProperty(candidate)) {
+            majorityMentionsHash[candidate] = calculMention(candidatesResults[candidate], MEDIAN);
+        }
+    }
+    return majorityMentionsHash;
 }
+
+function calculMention(candidateVotes, median) {
+    let cumulatedVotes = 0;
+    let result = {};
+
+    candidateVotes.some((vote, mention) => {
+        cumulatedVotes += vote;
+        if (median < cumulatedVotes) {
+            return result = {
+                "mention": mention,
+                "score": cumulatedVotes
+            };
+        }
+    });
+
+    return result;
+}
+
 
 function addVotesToCanditates(votes) {
     let canditates = {};
 
     // creation du tableau de resultat initialisé à 0
     for (let candidate in CANDIDATES) {
-        canditates[candidate.toString()] = [0, 0, 0, 0, 0, 0, 0];
+        if (CANDIDATES.hasOwnProperty(candidate)) {
+            canditates[candidate] = [0, 0, 0, 0, 0, 0, 0];
+        }
     }
 
     // Pour chaque vote, ajouter 1 quand un candidat reçoit une mention
@@ -139,6 +217,5 @@ function addVotesToCanditates(votes) {
 votes = createVotes(VOTES);
 // console.log(votes);
 
-
 let result = resultHash(votes);
-
+console.log(result);
