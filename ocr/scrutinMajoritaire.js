@@ -110,7 +110,7 @@ function resultHash(votes) {
 
     // trier les candidats
     let sortCandidates = sortCandidatesByMention(majorityMentions);
-    // console.log(sortCandidates);
+    console.log(sortCandidates);
 
     return result;
 }
@@ -123,9 +123,8 @@ function resultHash(votes) {
 // for key, mention in mentions.items()
 // ]
 function sortCandidatesByMention(majorityMentionsHash) {
-    let sortCandidates = {};
-
     let unsorted = [];
+	
     for (let key in majorityMentionsHash) {
         if (majorityMentionsHash.hasOwnProperty(key)) {
             unsorted.push({
@@ -135,8 +134,6 @@ function sortCandidatesByMention(majorityMentionsHash) {
             });
         }
     }
-    console.log("unsorted : ");
-	console.log(unsorted);
 
 	// tri à bulle
     let swapped = true;
@@ -144,19 +141,15 @@ function sortCandidatesByMention(majorityMentionsHash) {
         swapped = false;
 
         for (let i = 0; i < unsorted.length - 1; i++) {
-            // BUG HERE !!!!!!!!!!!!!!!!!!!!!!!!
-            if (unsorted[i + 1][1] > unsorted[i][1]) {
+            if (unsorted[i + 1]["mention"] > unsorted[i]["mention"]) {
                 [unsorted[i+1], unsorted[i]] = [unsorted[i], unsorted[i+1]];
                 swapped = true;
             }
         }
     }
 
-    //console.log("sorted : ");
-	//console.log(unsorted);
 
-
-    return sortCandidates;
+    return unsorted;
 }
 
 function majorityMentionsHash(candidatesResults) {
